@@ -1,5 +1,5 @@
 git add .
 
-git commit -m "feat: added new create template function"
+git commit -m "feat: added all dental offices as secret variables to not leak data"
 
 git push

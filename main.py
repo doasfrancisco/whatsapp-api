@@ -1,5 +1,7 @@
 import os
 
+from whatsapp import dentists
+
 from dotenv import load_dotenv
 import requests
 
@@ -33,10 +35,10 @@ def register_phone_number():
     response = requests.post(url, headers=headers, json=json)
     print(response.json())
 
-def create_product_update_template():
-    url = f"https://graph.facebook.com/{WHATSAPP_BUSINESS_ID}/message_templates"
+def create_product_update_template(whatsapp_business_id, access_token):
+    url = f"https://graph.facebook.com/{whatsapp_business_id}/message_templates"
     headers = {
-        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Authorization": f"Bearer {access_token}",
     }
     json = {
     "name": "actualizacion_producto_v2",
@@ -60,3 +62,7 @@ def create_product_update_template():
     response = requests.post(url, headers=headers, json=json)
     print(response.json())
 
+dental_office = "doctoc_patient_demo_doctoc"
+whatsapp_business_id = dentists[dental_office]["whatsapp_business_id"]
+access_token = dentists[dental_office]["access_token"]
+create_product_update_template(whatsapp_business_id, access_token)
