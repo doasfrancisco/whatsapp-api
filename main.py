@@ -1,32 +1,23 @@
-import os
-
 from whatsapp import dentists
 
-from dotenv import load_dotenv
 import requests
 
-load_dotenv(override=True)
-
-WHATSAPP_BUSINESS_ID = os.getenv("WHATSAPP_BUSINESS_ID")
-ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
-PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
-
-def subscribed_apps():
-    url = f"https://graph.facebook.com/v21.0/{WHATSAPP_BUSINESS_ID}/subscribed_apps"
+def subscribed_apps(business_id: str):
+    url = f"https://graph.facebook.com/v21.0/{business_id}/subscribed_apps"
     pass
 
-def info_phone_number():
-    url = f"https://graph.facebook.com/{PHONE_NUMBER_ID}"
+def info_phone_number(phone_number_id: str, access_token: str):
+    url = f"https://graph.facebook.com/{phone_number_id}"
     headers = {
-    "Authorization": f"Bearer {ACCESS_TOKEN}",
+    "Authorization": f"Bearer {access_token}",
     }
     response = requests.get(url, headers=headers)
     print(response.json())
 
-def register_phone_number():
-    url = f"https://graph.facebook.com/{PHONE_NUMBER_ID}/register"
+def register_phone_number(phone_number_id: str, access_token: str):
+    url = f"https://graph.facebook.com/{phone_number_id}/register"
     headers = {
-        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Authorization": f"Bearer {access_token}",
     }
     json = {
         "messaging_product": "whatsapp",
@@ -35,34 +26,16 @@ def register_phone_number():
     response = requests.post(url, headers=headers, json=json)
     print(response.json())
 
-def create_product_update_template(whatsapp_business_id, access_token):
-    url = f"https://graph.facebook.com/{whatsapp_business_id}/message_templates"
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-    }
-    json = {
-    "name": "actualizacion_producto_v2",
-    "language": "es",
-    "category": "MARKETING",
-    "parameter_format": "POSITIONAL",
-    "components": [
-        {
-        "type": "BODY",
-        "text": "¡Hola {{1}}! 😊 Espero que tenga una linda {{2}} 🫶\n\n{{3}}\n\n¡Yo seguiré aquí, atendiendo a los pacientes! 💪",
-        "example": {
-            "body_text": [
-            [
-                "Dr. Alexander","mañana","Para agendar, ahora solo necesito el motivo de la consulta, ya no hace falta la duración. Si me equivoco en un horario o en algo, avíseme porfa."
-            ]
-            ]
-        }
-        }
-    ]
-    }
-    response = requests.post(url, headers=headers, json=json)
-    print(response.json())
 
-dental_office = "doctoc_patient_demo_doctoc"
-whatsapp_business_id = dentists[dental_office]["whatsapp_business_id"]
-access_token = dentists[dental_office]["access_token"]
-create_product_update_template(whatsapp_business_id, access_token)
+if __name__ == "__main__":
+    dental_office = "centro_odontologico_benavides"
+
+    access_token = dentists[dental_office]["access_token"]
+    phone_number_id = dentists[dental_office]["phone_number_id"]
+    whatsapp_business_id = dentists[dental_office]["whatsapp_business_id"]
+
+    register_phone_number(phone_number_id, access_token)
+
+    # create_product_update_template(whatsapp_business_id, access_token)
+
+    # templates.create_task_reminder_template(whatsapp_business_id, access_token)
