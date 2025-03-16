@@ -41,6 +41,10 @@ def get_templates(whatsapp_business_id: str, access_token: str):
         print(e)
 
 def cloud_api_upload_media(file_name: str, whatsapp_phone_number_id: str, access_token: str):
+    """
+    Documentation: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media/
+    """
+    
     file_path = os.path.join("media", file_name)
     file_type = mimetypes.guess_type(file_name)[0]
     
@@ -58,6 +62,9 @@ def cloud_api_upload_media(file_name: str, whatsapp_phone_number_id: str, access
     print(response.json())
 
 def cloud_api_get_image(image_id: str, access_token: str):
+    """
+    Documentation: https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media/
+    """
     try:
         headers = {
             "Authorization": f"Bearer {access_token}",
@@ -84,6 +91,9 @@ def cloud_api_get_image(image_id: str, access_token: str):
         print(e)
 
 def resumable_upload_file(file_name: str, app_id: str, access_token: str):
+    """
+    Documentation: https://developers.facebook.com/docs/graph-api/guides/upload
+    """
     file_path = os.path.join("media", file_name)
     file_length = os.path.getsize(file_path)
     file_type = mimetypes.guess_type(file_name)[0]
