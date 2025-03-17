@@ -1,5 +1,5 @@
 .env
 venv
-whatsapp.py
+whatsapp.json
 __pycache__/
 media/

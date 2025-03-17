@@ -1,7 +1,6 @@
 import os
+import json
 import mimetypes
-
-from whatsapp import dentists
 
 import requests
 
@@ -127,10 +126,15 @@ def resumable_upload_file(file_name: str, app_id: str, access_token: str):
 
 
 if __name__ == "__main__":
+    with open("whatsapp.json") as f:
+        dentists = json.load(f)
+
     dental_office = "smp"
     access_token = dentists[dental_office]["access_token"]
     phone_number_id = dentists[dental_office]["phone_number_id"]
     whatsapp_business_id = dentists[dental_office]["whatsapp_business_id"]
+
+    # cloud_api_upload_media("imagen_recordatorio_suni.png", phone_number_id, access_token)
     
     # get_templates(whatsapp_business_id, access_token)
     # # register_phone_number(phone_number_id, access_token)
