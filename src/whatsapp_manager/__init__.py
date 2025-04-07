@@ -4,11 +4,54 @@ import mimetypes
 
 import requests
 
-def subscribed_apps(whatsapp_business_id: str):
-    url = f"https://graph.facebook.com/v21.0/{business_id}/subscribed_apps"
-    pass
+def get_subscribed_apps(whatsapp_business_id: str, access_token: str):
+    """
+    Documentation: https://stackoverflow.com/questions/77766798/meta-cloud-api-is-triggering-every-webhook-for-multiple-apps
+    """
+    url = f"https://graph.facebook.com/v21.0/{whatsapp_business_id}/subscribed_apps"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    print(response.json())
+
+def add_subscribed_apps(whatsapp_business_id: str, access_token: str):
+    """
+    Documentation: https://stackoverflow.com/questions/77766798/meta-cloud-api-is-triggering-every-webhook-for-multiple-apps
+    """
+    url = f"https://graph.facebook.com/v21.0/{whatsapp_business_id}/subscribed_apps"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.post(url, headers=headers)
+    response.raise_for_status()
+    print(response.json())
+
+def delete_subscribed_app(whatsapp_business_id: str, access_token: str):
+    """
+    Documentation: https://stackoverflow.com/questions/77766798/meta-cloud-api-is-triggering-every-webhook-for-multiple-apps
+    """
+    url = f"https://graph.facebook.com/v21.0/{whatsapp_business_id}/subscribed_apps"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.delete(url, headers=headers)
+    response.raise_for_status()
+    print(response.json())
 
 def info_phone_number(whatsapp_phone_number_id: str, access_token: str):
+    """
+    Documentation: https://developers.facebook.com/docs/whatsapp/business-management-api/manage-phone-numbers#get-a-single-phone-number
+    """
+    
+    url = f"https://graph.facebook.com/{whatsapp_phone_number_id}"
+    headers = {
+    "Authorization": f"Bearer {access_token}",
+    }
+    response = requests.get(url, headers=headers)
+    print(response.json())
+    
     url = f"https://graph.facebook.com/{whatsapp_phone_number_id}"
     headers = {
     "Authorization": f"Bearer {access_token}",
@@ -28,14 +71,42 @@ def register_phone_number(whatsapp_phone_number_id: str, access_token: str):
     response = requests.post(url, headers=headers, json=json)
     print(response.json())
 
-def get_templates(whatsapp_business_id: str, access_token: str):    
+def get_templates(whatsapp_business_id: str, access_token: str, next_page: str = None):
+    """
+    Documentation: https://developers.facebook.com/docs/whatsapp/business-management-api/message-templates/#retrieve-templates
+    """
     try:
         url = f"https://graph.facebook.com/v22.0/{whatsapp_business_id}/message_templates"
+        if next_page:
+            url = next_page
         headers = {
             "Authorization": f"Bearer {access_token}",
         }
         response = requests.get(url, headers=headers)
-        print(response.json())
+        return response.json()
+    except Exception as e:
+        print(e)
+
+def get_template_format(template_name: str, whatsapp_business_id: str, access_token: str):
+    try: 
+        templates = get_templates(whatsapp_business_id, access_token)
+        while templates:
+            for template in templates['data']:
+                if template['name'] == template_name:
+                    template = {
+                        "category": template['category'],
+                        "parameter_format": template['parameter_format'],
+                        "components": template['components']
+                    }
+                    template = json.dumps(template, indent=4, ensure_ascii=False)
+                    template = f'\"{template_name}\": {template}'
+                    print(template)
+                    return
+            next_page = templates['paging'].get('next')
+            templates = None
+            if next_page:
+                templates = get_templates(whatsapp_business_id, access_token, next_page)
+        raise Exception("Template not found")
     except Exception as e:
         print(e)
 
@@ -123,19 +194,3 @@ def resumable_upload_file(file_name: str, app_id: str, access_token: str):
         print(response.json())
     except Exception as e:
         print(e)
-
-
-if __name__ == "__main__":
-    with open("whatsapp.json") as f:
-        dentists = json.load(f)
-
-    dental_office = "smp"
-    access_token = dentists[dental_office]["access_token"]
-    phone_number_id = dentists[dental_office]["phone_number_id"]
-    whatsapp_business_id = dentists[dental_office]["whatsapp_business_id"]
-
-    # cloud_api_upload_media("imagen_recordatorio_suni.png", phone_number_id, access_token)
-    
-    # get_templates(whatsapp_business_id, access_token)
-    # # register_phone_number(phone_number_id, access_token)
-    # get_templates(whatsapp_business_id)
